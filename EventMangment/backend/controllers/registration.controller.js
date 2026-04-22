@@ -38,6 +38,9 @@ export const registerForEvent = async (req, res, next) => {
       userName: req.user.name,
       date: event.date,
     };
+    // {"registrationId":"69e6d14d91dbf1f53e5da472",
+    // "eventTitle":"UI/UX Design Sprint",
+    // "userName":"Ahmed Ali","date":"2026-07-04T09:40:20.213Z"}
     const qrData = JSON.stringify(qrPayload);
 
     // Generate QR code as a Data URL and store it on the registration record.

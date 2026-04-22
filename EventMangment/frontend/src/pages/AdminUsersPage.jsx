@@ -88,7 +88,11 @@ function AdminUsersPage() {
                   </option>
                 ))}
               </Form.Select>
-              <Button variant="outline-primary" onClick={handleViewUser} disabled={!selectedId}>
+              <Button
+                variant="outline-primary"
+                onClick={handleViewUser}
+                disabled={!selectedId}
+              >
                 View User
               </Button>
             </div>
@@ -113,7 +117,7 @@ function AdminUsersPage() {
                         variant="outline-danger"
                         size="sm"
                         onClick={() => handleDelete(u._id)}
-                        disabled={u._id === user.id}
+                        disabled={u._id === user._id}
                       >
                         Delete
                       </Button>

@@ -20,8 +20,11 @@ app.use(express.json());
 
 // General limiter for all API requests to reduce abuse and traffic spikes.
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+ windowMs: 1 * 60 * 1000, //
+  max: 1000, //
+  //   windowMs: 15 * 60 * 1000,
+
+  // max: 100,
   message: {
     status: "error",
     message: "Too many requests, please try again later.",

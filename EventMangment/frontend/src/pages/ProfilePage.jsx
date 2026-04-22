@@ -9,7 +9,9 @@ import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import ErrorAlert from "../components/ErrorAlert.jsx";
 
 const schema = Yup.object({
-  name: Yup.string().min(3, "Name must be at least 3 characters").max(50, "Name is too long"),
+  name: Yup.string()
+    .min(3, "Name must be at least 3 characters")
+    .max(50, "Name is too long"),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
@@ -27,7 +29,7 @@ function ProfilePage() {
       setError(null);
       setSuccess("");
       try {
-        const res = await api.patch(`/users/${user.id}`, values);
+        const res = await api.patch(`/users/${user._id}`, values);
         const updatedUser = { ...user, ...res.data.user };
         const token = localStorage.getItem("token") || "";
         login(token, updatedUser);
@@ -42,11 +44,11 @@ function ProfilePage() {
 
   useEffect(() => {
     async function loadProfile() {
-      if (!user?.id) return;
+      if (!user?._id) return;
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get(`/users/${user.id}`);
+        const res = await api.get(`/users/${user._id}`);
         formik.setValues({
           name: res.data.name || "",
           email: res.data.email || "",
@@ -58,7 +60,7 @@ function ProfilePage() {
       }
     }
     loadProfile();
-  }, [user?.id]);
+  }, [user?._id]);
 
   return (
     <Container className="py-4" style={{ maxWidth: 640 }}>
@@ -70,7 +72,9 @@ function ProfilePage() {
         <Card className="border-0 shadow-sm rounded-3">
           <Card.Body className="p-4">
             <ErrorAlert error={error} />
-            {success && <div className="alert alert-success py-2 px-3">{success}</div>}
+            {success && (
+              <div className="alert alert-success py-2 px-3">{success}</div>
+            )}
 
             <Form onSubmit={formik.handleSubmit}>
               <Form.Group className="mb-3">

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Form, Button, Card, Container, Row, Col, Alert } from "react-bootstrap";
+import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { FiUserPlus } from "react-icons/fi";
 
 import { registerUser } from "../services/authService.js";
+import { useAuth } from "../context/AuthContext.jsx";
 import ErrorAlert from "../components/ErrorAlert.jsx";
 
 const registerSchema = Yup.object({
@@ -24,24 +25,22 @@ const registerSchema = Yup.object({
 
 function RegisterPage() {
   const [serverError, setServerError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const formik = useFormik({
     initialValues: { name: "", email: "", password: "", confirmPassword: "" },
     validationSchema: registerSchema,
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       setServerError(null);
       try {
-        await registerUser({
+        const data = await registerUser({
           name: values.name,
           email: values.email,
           password: values.password,
         });
-        setSuccess(true);
-        resetForm();
-        // redirect to login after short delay
-        setTimeout(() => navigate("/login"), 1800);
+        login(data.token, data.user);
+        navigate("/");
       } catch (err) {
         setServerError(err);
       } finally {
@@ -60,12 +59,6 @@ function RegisterPage() {
               <p className="text-muted mb-4" style={{ fontSize: "0.9rem" }}>
                 Join EventHub today
               </p>
-
-              {success && (
-                <Alert variant="success" className="py-2 px-3" style={{ fontSize: "0.88rem" }}>
-                  Account created! Redirecting to login...
-                </Alert>
-              )}
 
               <ErrorAlert error={serverError} />
 
@@ -111,7 +104,9 @@ function RegisterPage() {
                     value={formik.values.password}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    isInvalid={formik.touched.password && !!formik.errors.password}
+                    isInvalid={
+                      formik.touched.password && !!formik.errors.password
+                    }
                   />
                   <Form.Control.Feedback type="invalid">
                     {formik.errors.password}
@@ -128,7 +123,8 @@ function RegisterPage() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     isInvalid={
-                      formik.touched.confirmPassword && !!formik.errors.confirmPassword
+                      formik.touched.confirmPassword &&
+                      !!formik.errors.confirmPassword
                     }
                   />
                   <Form.Control.Feedback type="invalid">
@@ -147,7 +143,10 @@ function RegisterPage() {
                 </Button>
               </Form>
 
-              <p className="text-center text-muted mt-3 mb-0" style={{ fontSize: "0.88rem" }}>
+              <p
+                className="text-center text-muted mt-3 mb-0"
+                style={{ fontSize: "0.88rem" }}
+              >
                 Already have an account?{" "}
                 <Link to="/login" className="text-primary">
                   Login
